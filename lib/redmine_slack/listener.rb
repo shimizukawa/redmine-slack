@@ -9,9 +9,11 @@ class SlackListener < Redmine::Hook::Listener
 		return unless channel
 
 		msg = "[#{escape issue.project}] #{escape issue.author} created <#{object_url issue}|#{escape issue}>"
+		text = escape issue.description
+		text = text.ljust(701) if text.count("\n") >= 5
 
 		attachment = {}
-		attachment[:text] = escape issue.description if issue.description
+		attachment[:text] = text if text.present?
 		attachment[:fields] = [{
 			:title => I18n.t("field_status"),
 			:value => escape(issue.status.to_s),
@@ -38,9 +40,11 @@ class SlackListener < Redmine::Hook::Listener
 		return unless channel
 
 		msg = "[#{escape issue.project}] #{escape journal.user.to_s} updated <#{object_url issue}|#{escape issue}>"
+		text = escape escape journal.notes
+		text = text.ljust(701) if text.count("\n") >= 5
 
 		attachment = {}
-		attachment[:text] = escape journal.notes if journal.notes
+		attachment[:text] = text if text.present?
 		attachment[:fields] = journal.details.map { |d| detail_to_field d }
 
 		speak msg, channel, attachment
