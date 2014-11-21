@@ -83,7 +83,7 @@ private
 	end
 
 	def object_url(obj)
-		Rails.application.routes.url_for(obj.event_url({:host => Setting.host_name, :protocol => Setting.protocol}))
+		Rails.application.routes.url_for(obj.event_url({:host => Setting.host_name.gsub(/\/*$/, ''), :protocol => Setting.protocol}))
 	end
 
 	def channel_for_project(proj)
